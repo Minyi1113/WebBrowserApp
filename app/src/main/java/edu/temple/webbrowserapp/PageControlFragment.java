@@ -22,7 +22,7 @@ public class PageControlFragment extends Fragment {
 
     public PageControlFragment() {
     }
-
+ 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
