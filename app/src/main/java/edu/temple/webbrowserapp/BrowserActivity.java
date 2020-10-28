@@ -8,7 +8,7 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
 
     private PageControlFragment pageControlFragment;
     private PageViewerFragment pageViewerFragment;
- 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
