@@ -74,7 +74,7 @@ public class PageViewerFragment extends Fragment {
             }
         }
     };
-
+ 
     public void FullURL(String url){
 
         webView.loadUrl(url);
