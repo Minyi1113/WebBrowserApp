@@ -1,8 +1,11 @@
 package edu.temple.webbrowserapp;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -16,10 +19,20 @@ public class PageViewerFragment extends Fragment {
 
     View view;
     WebView webView;
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    PageViewerInterface browserActivity;
 
     public PageViewerFragment() {
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof PageViewerInterface) {
+            browserActivity = (PageViewerInterface) context;
+        } else {
+            throw new RuntimeException("You must implement the required interface");
+        }
     }
 
     private PageViewerFragment.updateURL updatelistener;
@@ -34,8 +47,6 @@ public class PageViewerFragment extends Fragment {
     public static PageViewerFragment newInstance(String param1, String param2) {
         PageViewerFragment fragment = new PageViewerFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,6 +54,7 @@ public class PageViewerFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        webView.saveState(outState);
     }
 
     @Override
@@ -50,6 +62,7 @@ public class PageViewerFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,6 +73,10 @@ public class PageViewerFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(webViewClient);
 
+        // Restore WebView session
+        if (savedInstanceState != null)
+            webView.restoreState(savedInstanceState);
+
         return view;
     }
 
@@ -69,9 +86,9 @@ public class PageViewerFragment extends Fragment {
         }
 
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (updatelistener!=null){
-                updatelistener.SetURL(url);
-            }
+            super.onPageStarted(view, url, favicon);
+            updatelistener.SetURL(url);
+
         }
     };
 
@@ -97,8 +114,12 @@ public class PageViewerFragment extends Fragment {
         webView.goBack();
     }
 
-    public  void goforwardView(){
+    public void goforwardView(){
         webView.goForward();
+    }
+
+    interface PageViewerInterface {
+        void updateUrl(String url);
     }
 
 }

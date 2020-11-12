@@ -8,6 +8,10 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
 
     private PageControlFragment pageControlFragment;
     private PageViewerFragment pageViewerFragment;
+    private BrowserControlFragment browserControlFragment;
+    private PageListFragment pageListFragment;
+    private PagerFragment pagerFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +25,16 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
         getSupportFragmentManager().beginTransaction().add(R.id.page_viewer,pageViewerFragment).addToBackStack(null).commit();
 
         pageViewerFragment.addPageListener(this);
+
+        browserControlFragment = new BrowserControlFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.browser_control,browserControlFragment).addToBackStack(null).commit();
+
+        pageListFragment = new PageListFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.page_list,pageListFragment).addToBackStack(null).commit();
+
+        pagerFragment = new PagerFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.viewpager,pagerFragment).addToBackStack(null).commit();
+
     }
 
     @Override
@@ -40,6 +54,11 @@ public class BrowserActivity extends AppCompatActivity implements PageControlFra
     @Override
     public void SetURL(String url){
         pageControlFragment.updateURL(url);
+    }
+
+
+    public void connectPagerView(){
+        pagerFragment.getViewPagerAdapter();
     }
 
 }

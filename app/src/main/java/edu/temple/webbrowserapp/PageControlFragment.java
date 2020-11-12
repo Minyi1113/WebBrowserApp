@@ -26,6 +26,7 @@ public class PageControlFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+
         if (context instanceof ReadURL) {
             ParentActivity = (ReadURL) context;
         } else {
@@ -75,6 +76,9 @@ public class PageControlFragment extends Fragment {
                 ParentActivity.GoForwordToWeb();
             }
         });
+
+
+
         return view;
     }
 

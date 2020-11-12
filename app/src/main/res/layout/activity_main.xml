@@ -8,8 +8,8 @@
 
     <LinearLayout
         android:id="@+id/browser_control"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="413dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/page_control"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,11 +19,10 @@
 
     <LinearLayout
         android:id="@+id/page_control"
-        android:layout_width="412dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="573dp"
+        android:layout_width="404dp"
+        android:layout_height="100dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/page_viewer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,8 +30,8 @@
 
     <FrameLayout
         android:id="@+id/page_viewer"
-        android:layout_width="416dp"
-        android:layout_height="568dp"
+        android:layout_width="406dp"
+        android:layout_height="366dp"
         android:layout_marginTop="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
