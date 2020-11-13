@@ -18,7 +18,7 @@ public class PageControlFragment extends Fragment {
     ImageButton ButtonBack;
     EditText editText;
     View view;
-    ReadURL ParentActivity;
+    PageControlInterface browserActivity;
 
     public PageControlFragment() {
     }
@@ -27,22 +27,13 @@ public class PageControlFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if (context instanceof ReadURL) {
-            ParentActivity = (ReadURL) context;
+        if (context instanceof PageControlInterface) {
+            browserActivity = (PageControlInterface) context;
         } else {
             throw new RuntimeException("You must implement passInfoInterface to attach this fragment");
         }
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,21 +50,21 @@ public class PageControlFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String URLText =  editText.getText().toString();
-                ParentActivity.PutURLinWebView(URLText);
+                browserActivity.PutURLinWebView(URLText);
             }
         });
 
         ButtonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParentActivity.GobackToWeb();
+                browserActivity.GobackToWeb();
             }
         });
 
         ButtonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParentActivity.GoForwordToWeb();
+                browserActivity.GoForwordToWeb();
             }
         });
 
@@ -86,7 +77,7 @@ public class PageControlFragment extends Fragment {
         editText.setText(url);
     }
 
-    public interface ReadURL{
+    public interface PageControlInterface{
         void PutURLinWebView(String URL);
         void GobackToWeb();
         void GoForwordToWeb();
@@ -96,5 +87,6 @@ public class PageControlFragment extends Fragment {
         String stringTmp = editText.getText().toString();
         return stringTmp;
     }
+
 
 }

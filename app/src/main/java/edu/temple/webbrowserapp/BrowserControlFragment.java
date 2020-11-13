@@ -1,11 +1,6 @@
 package edu.temple.webbrowserapp;
-
-import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,65 +8,46 @@ import android.widget.ImageButton;
 
 
 public class BrowserControlFragment extends Fragment {
+    private ImageButton btnNew;
 
-    View view;
-    ImageButton ButtonCreate;
-    changeViewPager ParentActivity;
+    //interface
+    public void addNewButtonListener(BrowserControlFragment.OnNewButtonClickListener listener){
+        this.listener = listener;
+    }
+
+    public interface OnNewButtonClickListener{
+        void OnNewButtonClick();
+    }
+
+    private BrowserControlFragment.OnNewButtonClickListener listener;
 
     public BrowserControlFragment() {
-
+        // Required empty public constructor
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof BrowserControlFragment.changeViewPager) {
-            ParentActivity = (BrowserControlFragment.changeViewPager) context;
-        } else {
-            throw new RuntimeException("You must implement passInfoInterface to attach this fragment");
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public static BrowserControlFragment newInstance() {
+        return new BrowserControlFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
-
-    public static BrowserControlFragment newInstance(String param1, String param2) {
-        BrowserControlFragment fragment = new BrowserControlFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        view = inflater.inflate(R.layout.fragment_browser_control, container, false);
-
-        ButtonCreate = (ImageButton) view.findViewById(R.id.ButtonCreate);
-
-        ButtonCreate.setOnClickListener(new View.OnClickListener() {
+        // Inflate the layout for this fragment
+        final View myFragmentView =
+                inflater.inflate(R.layout.fragment_browser_control, container, false);
+        btnNew=myFragmentView.findViewById(R.id.ButtonCreate);
+        btnNew.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                ParentActivity.connectPagerView();
+            public void onClick(View view) {
+                listener.OnNewButtonClick();
             }
         });
-
-
-        return view;
-
+        return myFragmentView;
     }
-
-    interface changeViewPager{
-        void connectPagerView();
-    }
-
 }

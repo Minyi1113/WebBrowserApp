@@ -14,12 +14,15 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.net.MalformedURLException;
+
 
 public class PageViewerFragment extends Fragment {
 
     View view;
     WebView webView;
     PageViewerInterface browserActivity;
+    int FID;
 
     public PageViewerFragment() {
     }
@@ -35,32 +38,26 @@ public class PageViewerFragment extends Fragment {
         }
     }
 
-    private PageViewerFragment.updateURL updatelistener;
+    PageViewerFragment.PageViewerInterface updatelistener;
 
-    public void addPageListener(updateURL updatelistener){
+    public void addPageListener(PageViewerInterface updatelistener){
         this.updatelistener = updatelistener;
     }
-    public interface updateURL{
-        void SetURL(String url);
+
+    public interface PageViewerInterface{
+        void updateURL(String url);
+
+        void OnPageFinish(String title);
     }
 
-    public static PageViewerFragment newInstance(String param1, String param2) {
+    public static PageViewerFragment newInstance(int param1) {
         PageViewerFragment fragment = new PageViewerFragment();
         Bundle args = new Bundle();
+        args.putInt("FID", param1);
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        webView.saveState(outState);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -83,14 +80,23 @@ public class PageViewerFragment extends Fragment {
     private WebViewClient webViewClient = new WebViewClient(){
 
         public void onPageFinished(WebView view, String url) {
+            if (updatelistener!=null){
+                updatelistener.OnPageFinish(view.getTitle());
+            }
         }
 
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            updatelistener.SetURL(url);
+            updatelistener.updateURL(url);
 
         }
     };
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        webView.saveState(outState);
+    }
 
     public void FullURL(String url){
 
@@ -118,8 +124,36 @@ public class PageViewerFragment extends Fragment {
         webView.goForward();
     }
 
-    interface PageViewerInterface {
-        void updateUrl(String url);
+    public String getWebTitle(){
+        String sRtn="";
+        if (webView!=null)
+            sRtn = webView.getTitle();
+        return sRtn;
     }
+    public String getUrl(){
+        String sRtn="";
+        if (webView!=null)
+            sRtn = webView.getUrl();
+        return sRtn;
+    }
+
+    public void LoadPageFromURL(String sURL) throws MalformedURLException {
+        if (webView!=null)
+            webView.loadUrl(sURL);
+    }
+    
+    public void BackNext(int iBtn){
+        if (iBtn==R.id.ButtonBack) {
+            if (webView.canGoBack()) {
+                webView.goBack();
+            }
+        }
+        else if (iBtn==R.id.ButtonNext){
+            if (webView.canGoForward()) {
+                webView.goForward();
+            }
+        }
+    }
+
 
 }
