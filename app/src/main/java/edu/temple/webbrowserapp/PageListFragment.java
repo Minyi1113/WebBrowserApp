@@ -23,7 +23,7 @@ public class PageListFragment extends Fragment {
 
     public PageListFragment() {
         // Required empty public constructor
-    }
+    } 
 
     public void addSelectListener(OnItemSelectedListener listener){
         this.listener = listener;
