@@ -54,11 +54,15 @@ public class PagerFragment extends Fragment implements PageViewerFragment.OnPage
         view = inflater.inflate(R.layout.fragment_pager, container, false);
         viewPager = view.findViewById(R.id.viewpager);
 
-        webArray = new ArrayList<>();
-        webArray.add(new PageViewerFragment());
+        if (savedInstanceState!=null){
 
-        PageViewerFragment CurrentPageViewerFragment = webArray.get(webArray.size()-1);
-        CurrentPageViewerFragment.addOnPageChangeURListener(this);
+        }
+        else {
+            webArray = new ArrayList<>();
+            webArray.add(new PageViewerFragment());
+            PageViewerFragment CurrentPageViewerFragment = webArray.get(webArray.size() - 1);
+            CurrentPageViewerFragment.addOnPageChangeURListener(this);
+        }
 
         viewPagerAdapter =new ViewPagerFragmentStateAdapter(this.getActivity(), webArray);
         viewPager.setAdapter(viewPagerAdapter);
