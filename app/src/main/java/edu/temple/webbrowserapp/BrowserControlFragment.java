@@ -12,8 +12,7 @@ public class BrowserControlFragment extends Fragment {
     ImageButton ButtonCreat;
     View view;
 
-
-
+    
     //interface
     public void addNewButtonListener(BrowserControlFragment.OnNewButtonClickListener listener){
         this.listener = listener;}
