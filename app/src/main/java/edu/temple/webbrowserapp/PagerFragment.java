@@ -26,8 +26,6 @@ public class PagerFragment extends Fragment implements PageViewerFragment.OnPage
     }
 
     //interface
-
-
     public void addOnChangeListener(PagerFragment.OnChangeListener listener){
         this.listener = listener;}
 
