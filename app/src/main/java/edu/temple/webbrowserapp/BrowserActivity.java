@@ -1,56 +1,47 @@
 package edu.temple.webbrowserapp;
 
-import androidx.appcompat.app.ActionBar;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
-import java.util.ArrayList;
-
 public class BrowserActivity extends AppCompatActivity
-        implements PageControlFragment.PageControlInterface,
-                    PageViewerFragment.PageViewerInterface,
-                    BrowserControlFragment.OnNewButtonClickListener,
-                    PageListFragment.OnItemSelectedListener,
-                    PagerFragment.OnChangeListener
-        {
-
+        implements PageControlFragment.OnClickListener,
+            BrowserControlFragment.OnNewButtonClickListener,
+            PageListFragment.OnItemSelectedListener,
+            PagerFragment.OnChangeListener
+{
+    private FragmentManager fm;
     private PageControlFragment pageControlFragment;
-    private PageViewerFragment pageViewerFragment;
     private BrowserControlFragment browserControlFragment;
     private PageListFragment pageListFragment;
     private PagerFragment pagerFragment;
-
-    FragmentManager fm;
-    int igCurPagerID;
-
+    private int CurrentPagerID;
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         if (savedInstanceState!=null){
-            igCurPagerID=savedInstanceState.getInt("igCurPagerID",0);
+            CurrentPagerID = savedInstanceState.getInt("CurrentPagerID",0);
         }
         else{
-            igCurPagerID=0;
+            CurrentPagerID = 0;
         }
 
         setContentView(R.layout.activity_main);
 
         fm = getSupportFragmentManager();
 
-        Fragment tmpFragment;
+        Fragment tempFragment;
 
         //BrowserCtrl -> Add New page Button
-        if ((tmpFragment = fm.findFragmentById(R.id.browser_control)) instanceof BrowserControlFragment)
-            browserControlFragment = (BrowserControlFragment) tmpFragment;
+        if ((tempFragment = fm.findFragmentById(R.id.browser_control)) instanceof BrowserControlFragment)
+            browserControlFragment = (BrowserControlFragment) tempFragment;
         else {
             browserControlFragment = new BrowserControlFragment();
             fm.beginTransaction()
@@ -59,9 +50,10 @@ public class BrowserActivity extends AppCompatActivity
         }
         browserControlFragment.addNewButtonListener(this);
 
+
         //Url text box, go, back , next Button
-        if ((tmpFragment = fm.findFragmentById(R.id.page_control)) instanceof PageControlFragment)
-            pageControlFragment = (PageControlFragment) tmpFragment;
+        if ((tempFragment = fm.findFragmentById(R.id.page_control)) instanceof PageControlFragment)
+            pageControlFragment = (PageControlFragment) tempFragment;
         else {
             pageControlFragment = new PageControlFragment();
             fm.beginTransaction()
@@ -72,142 +64,88 @@ public class BrowserActivity extends AppCompatActivity
 
 
         //ViewPager and all webpager inside.
-        if ((tmpFragment = fm.findFragmentById(R.id.viewpager)) instanceof PagerFragment)
-            pagerFragment = (PagerFragment) tmpFragment;
+        if ((tempFragment = fm.findFragmentById(R.id.page_viewer)) instanceof PagerFragment)
+            pagerFragment = (PagerFragment) tempFragment;
         else {
             pagerFragment = new PagerFragment();
             fm.beginTransaction()
-                    .add(R.id.viewpager, pagerFragment)
+                    .add(R.id.page_viewer, pagerFragment)
                     .commit();
-
         }
         pagerFragment.addOnChangeListener(this);
 
- //      pageControlFragment = new PageControlFragment();
- //       fm.beginTransaction()
- //               .add(R.id.page_control,pageControlFragment)
- //               .addToBackStack(null)
- //               .commit();
 
-
-        pageViewerFragment = new PageViewerFragment();
-        fm.beginTransaction()
-                .add(R.id.page_viewer,pageViewerFragment)
-                .addToBackStack(null)
-                .commit();
-
-        pageViewerFragment.addPageListener(this);
-
-  //      browserControlFragment = new BrowserControlFragment();
-   //     fm.beginTransaction()
-  //              .add(R.id.browser_control,browserControlFragment)
-  //              .addToBackStack(null)
-  //              .commit();
-
-        pageListFragment = new PageListFragment();
-        fm.beginTransaction()
-                .add(R.id.page_list,pageListFragment)
-                .addToBackStack(null)
-                .commit();
-
- //       pagerFragment = new PagerFragment();
-  //      fm.beginTransaction()
-  //              .add(R.id.viewpager,pagerFragment)
-  //              .addToBackStack(null)
-    //            .commit();
-
-
-
-
-
-    @Override
-    public void PutURLinWebView(String URL) {
-        pageViewerFragment.FullURL(URL);
-        pageControlFragment.getURL();
-    }
-
-    public void GobackToWeb(){
-        pageViewerFragment.gobackview();
-    }
-
-    public void GoForwordToWeb(){
-        pageViewerFragment.goforwardView();
-    }
-
-    @Override
-    public void updateURL(String url){
-        pageControlFragment.updateURL(url);
-    }
-
-    @Override
-    public void OnPageFinish(String title) {
-
-    }
-
-
-    public void OnPagerPageChangeURL(int position, String sURL) {
-        pageControlFragment.updateURL(sURL);
-    }
-
-    public void OnPagerPageFinish(int position,String sTitle) {
-
-        //getSupportActionBar().setTitle(sTitle);
-        if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
-            //frPageList.UpdateList(position,sTitle);
-            //Toast.makeText(getApplicationContext(),"OnPageFinish",Toast.LENGTH_LONG).show();
-//            if (frPageList!=null)
-//            frPageList.UpdateList(frPager.getWebTitleList());
+        if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT){
+            //landscape
+            if ((tempFragment = fm.findFragmentById(R.id.page_list)) instanceof PageListFragment) {
+                pageListFragment = (PageListFragment) tempFragment;
+            }
+            else {
+                pageListFragment = PageListFragment.newInstance(pagerFragment.getWebListTitle());
+                fm.beginTransaction()
+                        .add(R.id.page_list, pageListFragment)
+                        .commit();
+            }
+            pageListFragment.addSelectListener(this);
         }
     }
 
+    //ControlFragment Button Click
+    @Override
+    public void OnClick(int ButtonID){
+         //click go
+        if (ButtonID==R.id.ButtonGo) {
+            pagerFragment.LoadPageFromURL(pageControlFragment.getURL());
+        }else{
+            pagerFragment.BackNext(ButtonID);
+        }
+    }
+
+    @Override
+    public void OnPagerChangeURL(int position, String URL) {
+        pageControlFragment.setURL(URL);
+    }
+
+    @Override
+    public void OnPagerFinish(int position, String stringTitle) {
+        if (position== pagerFragment.getCurrentItemPosition()){
+            getSupportActionBar().setTitle(pagerFragment.getCurrentTitle());
+            pageControlFragment.setURL(pagerFragment.getCurrentURL());
+        }
+        if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
+            pageListFragment.UpdateList(pagerFragment.getWebListTitle());
+        }
+    }
+
+    @Override
     public void OnPagerChanged(int position,String sTitle,String sURL){
 
+        CurrentPagerID = pagerFragment.getCurrentItemPosition();
         if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT){
-            //frPageList.UpdateList(position,sTitle);
-//            if (frPageList!=null)
-//            frPageList.UpdateList(frPager.getWebTitleList());
+            pageListFragment.UpdateList(pagerFragment.getWebListTitle());
         }
+        pageControlFragment.setURL(pagerFragment.getCurrentURL());
+        getSupportActionBar().setTitle(pagerFragment.getCurrentTitle());
 
-
-        ActionBar actionBar =getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        actionBar.setTitle(sTitle);
-        actionBar.show();
-
-
-        pageControlFragment.updateURL(sURL);
     }
 
-
+    //Add a new web page
+    @Override
     public void OnNewButtonClick() {
+        getSupportActionBar().setTitle("");
         pagerFragment.AddFragment();
 
-
-        if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT){
-
-
-        }
     }
 
-    public void onConfigurationChanged(Configuration newConfig) {
-
-        super.onConfigurationChanged(newConfig);
-
-    }
-
-
+    @Override
     public void onItemSelected(int iID) {
         pagerFragment.setCurrentFragment(iID);
     }
 
-
-
-
-
-    //  public void connectPagerView(){
-  //      pagerFragment.getViewPagerAdapter();
-  //  }
-
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("CurrentPagerID", CurrentPagerID);
+    }
 
 }

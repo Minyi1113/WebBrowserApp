@@ -1,6 +1,5 @@
 package edu.temple.webbrowserapp;
 
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,11 +11,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class PageListFragment extends Fragment {
+
+    private ArrayList<String> ListWebTitle;
+    private ListView listView;
+    private ArrayAdapter arrayAdapter;
+    View view;
+
+    public PageListFragment() {
+        // Required empty public constructor
+    }
 
     public void addSelectListener(OnItemSelectedListener listener){
         this.listener = listener;
@@ -28,20 +35,10 @@ public class PageListFragment extends Fragment {
 
     private OnItemSelectedListener listener;
 
-    private ArrayList<String> lstgWebTitle;
-    private ListView lstPage;
-    private ArrayAdapter adpList;
-
-    public PageListFragment() {
-        // Required empty public constructor
-    }
-
-
-    public static PageListFragment newInstance(ArrayList<String> lstWebTitle) {
+    public static PageListFragment newInstance(ArrayList<String> listWebTitle) {
         PageListFragment fragment = new PageListFragment();
-
         Bundle args = new Bundle();
-        args.putStringArrayList("WebTitle",lstWebTitle);
+        args.putStringArrayList("WebTitle",listWebTitle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,32 +52,35 @@ public class PageListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View myFragmentView =inflater.inflate(R.layout.fragment_page_list, container, false);
-        lstPage=(ListView) myFragmentView.findViewById(R.id.pageList);
 
-         if (savedInstanceState!=null){
-            lstgWebTitle=savedInstanceState.getStringArrayList("lstgWebTitle");
-         }
-         else {
-             lstgWebTitle = getArguments().getStringArrayList("WebTitle");
-         }
+        view =inflater.inflate(R.layout.fragment_page_list, container, false);
+        listView =(ListView) view.findViewById(R.id.pageList);
+        ListWebTitle =new ArrayList<>();
+        ArrayList<String> arrayTemp = new ArrayList<>();
 
         if (getArguments()!=null) {
-            lstgWebTitle = getArguments().getStringArrayList("WebTitle");
-            // Toast.makeText(getContext(), "getArguments()", Toast.LENGTH_LONG).show();
+            arrayTemp = getArguments().getStringArrayList("WebTitle");
+
+            for (int i = 0; i < arrayTemp.size(); i++){
+                if (ListWebTitle.size() <= i){
+                    ListWebTitle.add(arrayTemp.get(i));
+                }
+                else{
+                    ListWebTitle.set(i, arrayTemp.get(i));
+                }
+            }
         }
 
-        if (lstgWebTitle==null) {
-            //  Toast.makeText(getContext(),"newArray",Toast.LENGTH_LONG).show();
-            lstgWebTitle = new ArrayList<>();
-            lstgWebTitle.add("");
-
+        if (ListWebTitle ==null) {
+            ListWebTitle = new ArrayList<>();
+            ListWebTitle.add("");
         }
 
-        adpList=new ArrayAdapter<>( getActivity(), android.R.layout.simple_list_item_1,lstgWebTitle);
-        lstPage.setAdapter(adpList);
-        lstPage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        arrayAdapter = new ArrayAdapter<>( getActivity(), android.R.layout.simple_list_item_1, ListWebTitle);
+
+        listView.setAdapter(arrayAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (listener!=null){
@@ -89,60 +89,23 @@ public class PageListFragment extends Fragment {
             }
         });
 
-        return  myFragmentView;
+        return  view;
     }
 
-    public void UpdateList(ArrayList<String> lstWebTitle){
-        lstgWebTitle=lstWebTitle;
+    public void UpdateList(ArrayList<String> arrWebTitle){
+            for (int i = 0; i < arrWebTitle.size(); i++){
+                if (ListWebTitle.size() <= i){
+                    ListWebTitle.add(arrWebTitle.get(i));
+                }
+                else{
+                    ListWebTitle.set(i, arrWebTitle.get(i));
+                }
+            }
+        arrayAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putStringArrayList("lstgWebTitle", lstgWebTitle);
+
     }
-
-//    public void UpdateList(int position, String sTitle){
-//        while (position>=lstgWebTitle.size())
-//            lstgWebTitle.add("");
-//        lstgWebTitle.set(position,sTitle);
-//        adpList.notifyDataSetChanged();
-//    }
-
-//    public void AddATitle(String sTitle){
-//        lstgWebTitle.add(sTitle);
-//        adpList.notifyDataSetChanged();
-//    }
-//
-//    public void UpdateList(ArrayList<String> arrWebTitle){
-//        if (!arrWebTitle.isEmpty()) {
-//            //
-//            lstgWebTitle.clear();
-//
-//
-//            while (arrWebTitle.size()>lstgWebTitle.size())
-//                lstgWebTitle.add("");
-//            for (int i=0;i<arrWebTitle.size();i++){
-//                lstgWebTitle.add(arrWebTitle.get(i));
-//            }
-//            //lstgWebTitle=lstWebTitle;
-//
-//        }
-//
-//        String sTmp="ArrWeb-- ";
-//        for (int i=0;i<arrWebTitle.size();i++){
-//            sTmp=sTmp+" --- "+arrWebTitle.get(i);
-//        }
-//
-//        //Toast.makeText(getContext(),"P - "+Integer.toString(position)+" FID - "+Integer.toString(arrgWeb.get(position).getFID()),Toast.LENGTH_LONG).show();
-//        //Toast.makeText(getContext(),sTmp,Toast.LENGTH_LONG).show();
-//        adpList.notifyDataSetChanged();
-//        //lstPage.notifyAll();
-//    }
-//
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        //outState.putStringArrayList("lstgWebTitle", lstgWebTitle);
-//        //super.onSaveInstanceState(outState);
-//        //outState.putAll(outState);
-//    }
 }

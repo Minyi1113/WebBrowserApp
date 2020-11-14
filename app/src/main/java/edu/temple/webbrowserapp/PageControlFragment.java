@@ -1,11 +1,9 @@
 package edu.temple.webbrowserapp;
 
-import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,80 +11,79 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 public class PageControlFragment extends Fragment {
-    ImageButton ButtonGo;
-    ImageButton ButtonNext;
-    ImageButton ButtonBack;
-    EditText editText;
-    View view;
-    PageControlInterface browserActivity;
+    private ImageButton[] btn = new ImageButton[3];
+    private EditText txtURL;
+    private int[] btn_id = {R.id.ButtonGo, R.id.ButtonBack, R.id.ButtonNext};
+
+    //interface
+    public void addButtonClickListener(OnClickListener listener){
+        this.listener = listener;
+    }
+
+    public interface OnClickListener{
+        void OnClick(int btnID);
+    }
+
+    private OnClickListener listener;
 
     public PageControlFragment() {
+        // Required empty public constructor
+    }
+
+    public static PageControlFragment newInstance() {
+        return new PageControlFragment();
     }
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        if (context instanceof PageControlInterface) {
-            browserActivity = (PageControlInterface) context;
-        } else {
-            throw new RuntimeException("You must implement passInfoInterface to attach this fragment");
-        }
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //init EditText and 3 Buttons
+        txtURL=(EditText)getActivity().findViewById(R.id.URL);
+
+        for(int i = 0; i < btn.length; i++){
+            btn[i] = (ImageButton) getActivity().findViewById(btn_id[i]);
+            btn[i].setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    listener.OnClick(view.getId());
+                }
+            });
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        final View myFragmentView =inflater.inflate(R.layout.fragment_page_control, container, false);
 
-        view =  inflater.inflate(R.layout.fragment_page_control, container, false);
-
-        ButtonGo = (ImageButton) view.findViewById(R.id.ButtonGo);
-        ButtonBack = (ImageButton) view.findViewById(R.id.ButtonBack);
-        ButtonNext = (ImageButton) view.findViewById(R.id.ButtonNext);
-        editText = (EditText) view.findViewById(R.id.URL);
-
-        ButtonGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String URLText =  editText.getText().toString();
-                browserActivity.PutURLinWebView(URLText);
-            }
-        });
-
-        ButtonBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                browserActivity.GobackToWeb();
-            }
-        });
-
-        ButtonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                browserActivity.GoForwordToWeb();
-            }
-        });
-
-
-
-        return view;
+        return  myFragmentView;
     }
 
-    public void updateURL(String url){
-        editText.setText(url);
-    }
-
-    public interface PageControlInterface{
-        void PutURLinWebView(String URL);
-        void GobackToWeb();
-        void GoForwordToWeb();
+    public void setURL(String sURL){
+        txtURL.setText(sURL);
     }
 
     public String getURL(){
-        String stringTmp = editText.getText().toString();
-        return stringTmp;
+        String sTmp=txtURL.getText().toString();
+        if (sTmp.equals("")) {
+            return sTmp;
+        }
+
+        if (!sTmp.toLowerCase().contains("https://") &&
+                !sTmp.toLowerCase().contains("http://")) {
+            sTmp="https://"+sTmp;
+        }
+
+        txtURL.setText(sTmp);
+        return sTmp;
     }
-
-
 }
+
+

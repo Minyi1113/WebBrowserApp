@@ -1,53 +1,42 @@
 package edu.temple.webbrowserapp;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.net.MalformedURLException;
 
-
 public class PageViewerFragment extends Fragment {
 
     View view;
-    WebView webView;
-    PageViewerInterface browserActivity;
-    int FID;
+    private WebView webView;
+    private WebSettings webSettings;
+    private int FID;
+
+    //interface
+
+
+    public void addOnPageChangeURListener(PageViewerFragment.OnPageChangeURLListener listener){
+        this.listener = listener;}
+
+    public interface OnPageChangeURLListener{
+        void OnPageChangeURL(String sURL);
+        void OnPageFinish(String sTitle);
+    }
+
+    private PageViewerFragment.OnPageChangeURLListener listener;
+
 
     public PageViewerFragment() {
-    }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        if (context instanceof PageViewerInterface) {
-            browserActivity = (PageViewerInterface) context;
-        } else {
-            throw new RuntimeException("You must implement the required interface");
-        }
-    }
-
-    PageViewerFragment.PageViewerInterface updatelistener;
-
-    public void addPageListener(PageViewerInterface updatelistener){
-        this.updatelistener = updatelistener;
-    }
-
-    public interface PageViewerInterface{
-        void updateURL(String url);
-
-        void OnPageFinish(String title);
     }
 
     public static PageViewerFragment newInstance(int param1) {
@@ -58,102 +47,93 @@ public class PageViewerFragment extends Fragment {
         return fragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint("JavascriptInterface")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_page_viewer, container, false);
+        view =inflater.inflate(R.layout.fragment_page_viewer, container, false);
 
-        webView = (WebView) view.findViewById(R.id.WebView);
-        webView.getSettings().setJavaScriptEnabled(true);
+        if (getArguments()!=null) {
+            FID = getArguments().getInt("FID");
+        }
+
+        webView =(WebView)view.findViewById(R.id.WebView);
+
+        webView.addJavascriptInterface(this,"android");
         webView.setWebViewClient(webViewClient);
 
-        // Restore WebView session
-        if (savedInstanceState != null)
-            webView.restoreState(savedInstanceState);
+        webSettings= webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
 
-        return view;
+        if(savedInstanceState != null){
+            webView.restoreState(savedInstanceState);
+        }
+        return  view;
     }
 
-    private WebViewClient webViewClient = new WebViewClient(){
 
+    private WebViewClient webViewClient = new WebViewClient(){
+        //finished
+        @Override
         public void onPageFinished(WebView view, String url) {
-            if (updatelistener!=null){
-                updatelistener.OnPageFinish(view.getTitle());
+            if (listener!=null){
+                listener.OnPageFinish(view.getTitle());
             }
         }
 
+        //Load page
+        @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-            updatelistener.updateURL(url);
-
+            if (listener!=null){
+                listener.OnPageChangeURL(url);
+            }
         }
     };
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        webView.saveState(outState);
-    }
-
-    public void FullURL(String url){
-
-        webView.loadUrl(url);
-
-        if(url.contains("http")) {
-            webView.loadUrl(url);
-            webView.getSettings().setJavaScriptEnabled(true);
-
-        }else if (url.contains(".com")){
-            webView.loadUrl("http://"+url);
-            webView.getSettings().setJavaScriptEnabled(true);
-
-        }else{
-            webView.loadUrl("http://"+url+".com/");
-            webView.getSettings().setJavaScriptEnabled(true);
-        }
-    }
-
-    public void gobackview(){
-        webView.goBack();
-    }
-
-    public void goforwardView(){
-        webView.goForward();
-    }
-
     public String getWebTitle(){
-        String sRtn="";
-        if (webView!=null)
-            sRtn = webView.getTitle();
-        return sRtn;
-    }
-    public String getUrl(){
-        String sRtn="";
-        if (webView!=null)
-            sRtn = webView.getUrl();
-        return sRtn;
+        String stringTitle="";
+        if (webView !=null)
+            stringTitle= webView.getTitle();
+        return stringTitle;
     }
 
-    public void LoadPageFromURL(String sURL) throws MalformedURLException {
-        if (webView!=null)
-            webView.loadUrl(sURL);
+    public String getUrl(){
+        String stringURL="";
+        if (webView !=null)
+            stringURL= webView.getUrl();
+        return stringURL;
     }
-    
-    public void BackNext(int iBtn){
-        if (iBtn==R.id.ButtonBack) {
+
+    public void LoadPageFromURL(String URL) throws MalformedURLException {
+        if (webView !=null)
+            webView.loadUrl(URL);
+    }
+
+    public void BackNext(int itemBotton){
+        if (itemBotton==R.id.ButtonBack) {
             if (webView.canGoBack()) {
                 webView.goBack();
             }
         }
-        else if (iBtn==R.id.ButtonNext){
+        else if (itemBotton==R.id.ButtonNext){
             if (webView.canGoForward()) {
                 webView.goForward();
             }
         }
     }
 
-
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        webView.saveState(outState);
+    }
 }
