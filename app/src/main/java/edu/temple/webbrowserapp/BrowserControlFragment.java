@@ -24,7 +24,7 @@ public class BrowserControlFragment extends Fragment {
     }
 
     private BrowserControlFragment.OnNewButtonClickListener listener;
-
+ 
     public BrowserControlFragment() {
         // Required empty public constructor
     }
