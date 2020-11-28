@@ -42,10 +42,10 @@ public class BrowserControlFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View myFragmentView =
+        final View myView =
                 inflater.inflate(R.layout.fragment_browser_control, container, false);
 
-        ButtonNewPage = myFragmentView.findViewById(R.id.ButtonNewPage);
+        ButtonNewPage = myView.findViewById(R.id.ButtonNewPage);
         ButtonNewPage.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -53,7 +53,7 @@ public class BrowserControlFragment extends Fragment {
             }
         });
 
-        ButtonBookmark = myFragmentView.findViewById(R.id.ButtonBookmark);
+        ButtonBookmark = myView.findViewById(R.id.ButtonBookmark);
         ButtonBookmark.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -61,7 +61,7 @@ public class BrowserControlFragment extends Fragment {
             }
         });
 
-        ButtonSave = myFragmentView.findViewById(R.id.ButtonSave);
+        ButtonSave = myView.findViewById(R.id.ButtonSave);
         ButtonSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -70,7 +70,7 @@ public class BrowserControlFragment extends Fragment {
         });
 
 
-        return myFragmentView;
+        return myView;
     }
 }
 

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class BookmarksActivity extends AppCompatActivity {
     private DeletableAdapter adapter;
-    private ArrayList<TBookmark> bkgBookmark;
-    private ArrayList<String> arrgBookmartTitle;
+    private ArrayList<BookmarkList> ListBookmark;
+    private ArrayList<String> arrayBookmartTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,19 +21,19 @@ public class BookmarksActivity extends AppCompatActivity {
         ListView list_view = (ListView) findViewById(R.id.list_view);
 
         getSupportActionBar().setTitle("Bookmark List");
-        bkgBookmark=LoadBookmark();
-        arrgBookmartTitle = new ArrayList<String>();
+        ListBookmark = LoadBookmark();
+        arrayBookmartTitle = new ArrayList<String>();
 
-        for (int i=0;i<bkgBookmark.size();i++){
-            arrgBookmartTitle.add(bkgBookmark.get(i).getTitle());
+        for (int i=0;i<ListBookmark.size();i++){
+            arrayBookmartTitle.add(ListBookmark.get(i).getTitle());
         }
 
-        adapter = new DeletableAdapter(this, arrgBookmartTitle);
+        adapter = new DeletableAdapter(this, arrayBookmartTitle);
 
         adapter.setAttentionClickListener(new DeletableAdapter.AttentionClickListener() {
             @Override
             public void DeleteItem(int iID) {
-                bkgBookmark.remove(iID);
+                ListBookmark.remove(iID);
                 SaveBookmark();
             }
 
@@ -57,15 +57,15 @@ public class BookmarksActivity extends AppCompatActivity {
     }
 
     //load the bookmark
-    private ArrayList<TBookmark> LoadBookmark(){
-        ArrayList<TBookmark> arrTemp=new ArrayList<>();
+    private ArrayList<BookmarkList> LoadBookmark(){
+        ArrayList<BookmarkList> arrTemp=new ArrayList<>();
         Context context = getApplicationContext();
         SharedPreferences pref = context.getSharedPreferences("MyAppInfo",Context.MODE_PRIVATE);
 
         int itotalBookmark=pref.getInt("TotalBookmark" , 0);
 
         for (int i=0; i<itotalBookmark;i++){
-            TBookmark bkTmp=new TBookmark();
+            BookmarkList bkTmp=new BookmarkList();
             int iTmpID=pref.getInt("B_ID_"+i,-1);
             String iTmpTitle=pref.getString("B_Title_"+i,"");
             String iTmpURL=pref.getString("B_URL_"+i,"");
@@ -80,12 +80,12 @@ public class BookmarksActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         SharedPreferences pref = context.getSharedPreferences("MyAppInfo",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("TotalBookmark" ,bkgBookmark.size());
+        editor.putInt("TotalBookmark" ,ListBookmark.size());
 
-        for (int i=0; i<bkgBookmark.size();i++){
-            editor.putInt("B_ID_"+i,bkgBookmark.get(i).getID());
-            editor.putString("B_Title_"+i,bkgBookmark.get(i).getTitle());
-            editor.putString("B_URL_"+i,bkgBookmark.get(i).getURL());
+        for (int i=0; i<ListBookmark.size();i++){
+            editor.putInt("B_ID_"+i,ListBookmark.get(i).getID());
+            editor.putString("B_Title_"+i,ListBookmark.get(i).getTitle());
+            editor.putString("B_URL_"+i,ListBookmark.get(i).getURL());
         }
 
         editor.apply();
@@ -94,8 +94,8 @@ public class BookmarksActivity extends AppCompatActivity {
 
     private ArrayList<String> getBookmarkTitleList(){
         ArrayList<String> arrTitle=new ArrayList<>();
-        for (int i=0;i<bkgBookmark.size();i++){
-            arrTitle.add(bkgBookmark.get(i).getTitle());
+        for (int i=0;i<ListBookmark.size();i++){
+            arrTitle.add(ListBookmark.get(i).getTitle());
         }
         return arrTitle;
     }

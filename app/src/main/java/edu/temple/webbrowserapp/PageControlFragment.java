@@ -11,9 +11,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 public class PageControlFragment extends Fragment {
-    private ImageButton[] btn = new ImageButton[3];
+    private ImageButton[] Button = new ImageButton[3];
     private EditText txtURL;
-    private int[] btn_id = {R.id.ButtonGo, R.id.ButtonBack, R.id.ButtonNext};
+    private int[] Button_id = {R.id.ButtonGo, R.id.ButtonBack, R.id.ButtonNext};
 
     //interface
     public void addButtonClickListener(OnClickListener listener){this.listener = listener;}
@@ -43,9 +43,9 @@ public class PageControlFragment extends Fragment {
         //init EditText and 3 Buttons
         txtURL=(EditText)getActivity().findViewById(R.id.URL_text);
 
-        for(int i = 0; i < btn.length; i++){
-            btn[i] = (ImageButton) getActivity().findViewById(btn_id[i]);
-            btn[i].setOnClickListener(new View.OnClickListener(){
+        for(int i = 0; i < Button.length; i++){
+            Button[i] = (ImageButton) getActivity().findViewById(Button_id[i]);
+            Button[i].setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view) {
                     listener.OnClick(view.getId());

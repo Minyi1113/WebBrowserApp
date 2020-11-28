@@ -13,11 +13,11 @@ import android.widget.TextView;
 public class DeletableAdapter extends BaseAdapter{
     private Context context;
     private ArrayList<String> text;
-    private AttentionClickListener mAttentionClickListener;
+    private AttentionClickListener myAttentionClickListener;
 
     //interface
     public void setAttentionClickListener(AttentionClickListener attentionClickListener) {
-        mAttentionClickListener = attentionClickListener;
+        myAttentionClickListener = attentionClickListener;
     }
 
     public interface AttentionClickListener {
@@ -54,7 +54,7 @@ public class DeletableAdapter extends BaseAdapter{
         txtTitle.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAttentionClickListener.OnBookmartClick(index);
+                myAttentionClickListener.OnBookmartClick(index);
             }
         });
         final ImageView btnDelete=(ImageView)view.findViewById(R.id.ButtonDelete);
@@ -64,7 +64,7 @@ public class DeletableAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 text.remove(index);
-                mAttentionClickListener.DeleteItem(index);
+                myAttentionClickListener.DeleteItem(index);
                 notifyDataSetChanged();
             }
         });

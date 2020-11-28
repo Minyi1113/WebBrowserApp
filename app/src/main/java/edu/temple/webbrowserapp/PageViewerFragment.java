@@ -15,7 +15,7 @@ import java.net.MalformedURLException;
 
 public class PageViewerFragment extends Fragment {
     //var
-    private WebView wbMain;
+    private WebView webView;
     private WebSettings webSettings;
 
     //interface
@@ -49,17 +49,17 @@ public class PageViewerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View myFragmentView =inflater.inflate(R.layout.fragment_page_viewer, container, false);
-        wbMain=(WebView)myFragmentView.findViewById(R.id.WebView);
-        wbMain.addJavascriptInterface(this,"android");
-        wbMain.setWebViewClient(webViewClient);
-        webSettings=wbMain.getSettings();
+        webView=(WebView)myFragmentView.findViewById(R.id.WebView);
+        webView.addJavascriptInterface(this,"android");
+        webView.setWebViewClient(webViewClient);
+        webSettings=webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setSupportZoom(true);
         webSettings.setBuiltInZoomControls(true);
 
         if(savedInstanceState != null){
-            wbMain.restoreState(savedInstanceState);
+            webView.restoreState(savedInstanceState);
         }
         return  myFragmentView;
     }
@@ -80,38 +80,38 @@ public class PageViewerFragment extends Fragment {
 
     public String getWebTitle(){
         String sRtn="";
-        if (wbMain!=null)
-            sRtn=wbMain.getTitle();
+        if (webView!=null)
+            sRtn=webView.getTitle();
         return sRtn;
     }
 
     public String getUrl(){
         String sRtn="";
-        if (wbMain!=null)
-            sRtn=wbMain.getUrl();
+        if (webView!=null)
+            sRtn=webView.getUrl();
         return sRtn;
     }
 
     public void LoadPageFromURL(String sURL) throws MalformedURLException {
-        if (wbMain!=null)
-            wbMain.loadUrl(sURL);
+        if (webView!=null)
+            webView.loadUrl(sURL);
     }
 
     public void BackNext(int iBtn){
         if (iBtn==R.id.ButtonBack) {
-            if (wbMain.canGoBack()) {
-                wbMain.goBack();
+            if (webView.canGoBack()) {
+                webView.goBack();
             }
         }
         else if (iBtn==R.id.ButtonNext){
-            if (wbMain.canGoForward()) {
-                wbMain.goForward();
+            if (webView.canGoForward()) {
+                webView.goForward();
             }
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        wbMain.saveState(outState);
+        webView.saveState(outState);
     }
 }

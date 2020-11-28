@@ -22,12 +22,12 @@ public class BrowserActivity extends AppCompatActivity
 {
     private final int REQUEST_CODE=111;
     private FragmentManager fm;
-    private PageControlFragment frPageControl;
-    private BrowserControlFragment frBrowserCtrl;
-    private PageListFragment frPageList;
-    private PagerFragment frPager;
-    private int igCurPagerID;
-    private ArrayList<TBookmark> bkgBookmark;
+    private PageControlFragment pageControlFragment;
+    private BrowserControlFragment browserControlFragment;
+    private PageListFragment pageListFragment;
+    private PagerFragment pagerFragment;
+    private int CurrentPagerID;
+    private ArrayList<BookmarkList> bkgBookmark;
     private static int igClickID=-1;
 
     public static void ToBookmark(int iClick){
@@ -41,10 +41,10 @@ public class BrowserActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState!=null){
-            igCurPagerID=savedInstanceState.getInt("igCurPagerID",0);
+            CurrentPagerID=savedInstanceState.getInt("CurrentPagerID",0);
         }
         else{
-            igCurPagerID=0;
+            CurrentPagerID=0;
         }
 
         bkgBookmark=LoadBookmark();
@@ -53,49 +53,49 @@ public class BrowserActivity extends AppCompatActivity
 
         //BrowserCtrl -> Add New page Button
         if ((tmpFragment = fm.findFragmentById(R.id.browser_control_FM)) instanceof BrowserControlFragment)
-            frBrowserCtrl = (BrowserControlFragment) tmpFragment;
+            browserControlFragment = (BrowserControlFragment) tmpFragment;
         else {
-            frBrowserCtrl = new BrowserControlFragment();
+            browserControlFragment = new BrowserControlFragment();
             fm.beginTransaction()
-                    .add(R.id.browser_control_FM, frBrowserCtrl)
+                    .add(R.id.browser_control_FM, browserControlFragment)
                     .commit();
         }
-        frBrowserCtrl.addNewButtonListener(this);
+        browserControlFragment.addNewButtonListener(this);
 
         //Url text box, go, back , next Button
         if ((tmpFragment = fm.findFragmentById(R.id.page_control_FM)) instanceof PageControlFragment)
-            frPageControl = (PageControlFragment) tmpFragment;
+            pageControlFragment = (PageControlFragment) tmpFragment;
         else {
-            frPageControl = new PageControlFragment();
+            pageControlFragment = new PageControlFragment();
             fm.beginTransaction()
-                    .add(R.id.page_control_FM, frPageControl)
+                    .add(R.id.page_control_FM, pageControlFragment)
                     .commit();
         }
-        frPageControl.addButtonClickListener(this);
+        pageControlFragment.addButtonClickListener(this);
 
         //ViewPager and all webpager inside.
         if ((tmpFragment = fm.findFragmentById(R.id.page_viewer_FM)) instanceof PagerFragment)
-            frPager = (PagerFragment) tmpFragment;
+            pagerFragment = (PagerFragment) tmpFragment;
         else {
-            frPager = new PagerFragment();
+            pagerFragment = new PagerFragment();
             fm.beginTransaction()
-                    .add(R.id.page_viewer_FM, frPager)
+                    .add(R.id.page_viewer_FM, pagerFragment)
                     .commit();
         }
-        frPager.addOnChangeListener(this);
+        pagerFragment.addOnChangeListener(this);
 
         if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT){
             //landscape
             if ((tmpFragment = fm.findFragmentById(R.id.page_list_FM)) instanceof PageListFragment) {
-                frPageList = (PageListFragment) tmpFragment;
+                pageListFragment = (PageListFragment) tmpFragment;
             }
             else {
-                frPageList = PageListFragment.newInstance(frPager.getWebTitleList());
+                pageListFragment = PageListFragment.newInstance(pagerFragment.getWebTitleList());
                 fm.beginTransaction()
-                        .add(R.id.page_list_FM, frPageList)
+                        .add(R.id.page_list_FM, pageListFragment)
                         .commit();
             }
-            frPageList.addSelectListener(this);
+            pageListFragment.addSelectListener(this);
         }
     }
 
@@ -104,43 +104,43 @@ public class BrowserActivity extends AppCompatActivity
     public void OnClick(int btnID){
          //click go
         if (btnID==R.id.ButtonGo) {
-            frPager.LoadPageFromURL(frPageControl.getURL());
+            pagerFragment.LoadPageFromURL(pageControlFragment.getURL());
         }else{
-            frPager.BackNext(btnID);
+            pagerFragment.BackNext(btnID);
         }
     }
 
     @Override
     public void OnPagerPageChangeURL(int position, String sURL) {
-        frPageControl.setURL(sURL);
+        pageControlFragment.setURL(sURL);
     }
 
     @Override
     public void OnPagerPageFinish(int position,String sTitle) {
-        if (position==frPager.getCurItemPosition()){
-            getSupportActionBar().setTitle(frPager.getCurItemTitle());
-            frPageControl.setURL(frPager.getCurItemURL());
+        if (position==pagerFragment.getCurItemPosition()){
+            getSupportActionBar().setTitle(pagerFragment.getCurItemTitle());
+            pageControlFragment.setURL(pagerFragment.getCurItemURL());
         }
         if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
-            frPageList.UpdateList(frPager.getWebTitleList());
+            pageListFragment.UpdateList(pagerFragment.getWebTitleList());
         }
     }
 
     @Override
     public void OnPagerChanged(int position,String sTitle,String sURL){
-        igCurPagerID=frPager.getCurItemPosition();
+        CurrentPagerID=pagerFragment.getCurItemPosition();
         if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT){
-            frPageList.UpdateList(frPager.getWebTitleList());
+            pageListFragment.UpdateList(pagerFragment.getWebTitleList());
         }
-        frPageControl.setURL(frPager.getCurItemURL());
-        getSupportActionBar().setTitle(frPager.getCurItemTitle());
+        pageControlFragment.setURL(pagerFragment.getCurItemURL());
+        getSupportActionBar().setTitle(pagerFragment.getCurItemTitle());
     }
 
     //Add a new web page
     @Override
     public void OnNewButtonClick() {
         getSupportActionBar().setTitle("");
-        frPager.AddFragment();
+        pagerFragment.AddFragment();
     }
 
     @Override
@@ -153,8 +153,8 @@ public class BrowserActivity extends AppCompatActivity
     //save a new bookmark
     @Override
     public void OnSave(){
-        String sURL= frPager.getCurItemURL();
-        String sTitle=frPager.getCurItemTitle();
+        String sURL= pagerFragment.getCurItemURL();
+        String sTitle=pagerFragment.getCurItemTitle();
 
         if ((sURL!=null) && (sTitle!=null)){
             Log.v("KKK","canSave");
@@ -166,24 +166,24 @@ public class BrowserActivity extends AppCompatActivity
                 }
             }
 
-            TBookmark bkTmp=new TBookmark();
+            BookmarkList bkTmp=new BookmarkList();
             bkTmp.setVal(bkgBookmark.size(),sTitle,sURL);
             bkgBookmark.add(bkTmp);
             SaveBookmark();
             Toast.makeText(getApplicationContext(),"Bookmark save success.",Toast.LENGTH_LONG).show();
         }else{
-            Toast.makeText(getApplicationContext(),"   No Title or URL \nBookmark not save",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"No Title or URL \nBookmark not save",Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void onItemSelected(int iID) {
-        frPager.setCurrentFragment(iID);
+        pagerFragment.setCurrentFragment(iID);
     }
 
     //load the bookmark
-    private ArrayList<TBookmark> LoadBookmark(){
-        ArrayList<TBookmark> arrTemp=new ArrayList<>();
+    private ArrayList<BookmarkList> LoadBookmark(){
+        ArrayList<BookmarkList> arrTemp=new ArrayList<>();
 
         Context context = getApplicationContext();
         SharedPreferences pref = context.getSharedPreferences("MyAppInfo",Context.MODE_PRIVATE);
@@ -191,7 +191,7 @@ public class BrowserActivity extends AppCompatActivity
         int itotalBookmark=pref.getInt("TotalBookmark" , 0);
 
         for (int i=0; i<itotalBookmark;i++){
-            TBookmark bkTmp=new TBookmark();
+            BookmarkList bkTmp=new BookmarkList();
             int iTmpID=pref.getInt("B_ID_"+i,-1);
             String iTmpTitle=pref.getString("B_Title_"+i,"");
             String iTmpURL=pref.getString("B_URL_"+i,"");
@@ -223,7 +223,7 @@ public class BrowserActivity extends AppCompatActivity
     public void onWindowFocusChanged (boolean hasFocus){
         bkgBookmark=LoadBookmark();
         if (hasFocus && (igClickID>=0)){
-            frPager.LoadPageFromURL(bkgBookmark.get(igClickID).getURL());
+            pagerFragment.LoadPageFromURL(bkgBookmark.get(igClickID).getURL());
             igClickID=-1;
         }
     }
@@ -231,6 +231,6 @@ public class BrowserActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("igCurPagerID",igCurPagerID);
+        outState.putInt("CurrentPagerID",CurrentPagerID);
     }
 }

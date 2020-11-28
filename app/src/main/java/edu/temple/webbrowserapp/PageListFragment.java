@@ -21,9 +21,9 @@ public class PageListFragment extends Fragment {
     }
 
     private OnItemSelectedListener listener;
-    private ArrayList<String> lstgWebTitle;
-    private ListView lstPage;
-    private ArrayAdapter adpList;
+    private ArrayList<String> ListWebTitle;
+    private ListView listView;
+    private ArrayAdapter arrayAdapter;
 
     public PageListFragment() {
         // Required empty public constructor
@@ -48,29 +48,29 @@ public class PageListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View myFragmentView =inflater.inflate(R.layout.fragment_page_list, container, false);
-        lstPage=(ListView) myFragmentView.findViewById(R.id.PageList);
-        lstgWebTitle=new ArrayList<>();
+        listView=(ListView) myFragmentView.findViewById(R.id.PageList);
+        ListWebTitle=new ArrayList<>();
 
         if (getArguments()!=null) {
             ArrayList<String> arrTemp=new ArrayList<>();
             arrTemp = getArguments().getStringArrayList("WebTitle");
 
             for (int i=0;i<arrTemp.size();i++){
-                if (lstgWebTitle.size()<=i){
-                    lstgWebTitle.add(arrTemp.get(i));
+                if (ListWebTitle.size()<=i){
+                    ListWebTitle.add(arrTemp.get(i));
                 }
                 else{
-                    lstgWebTitle.set(i,arrTemp.get(i));
+                    ListWebTitle.set(i,arrTemp.get(i));
                 }
             }
         }
         else{
-            lstgWebTitle.add("");
+            ListWebTitle.add("");
         }
 
-        adpList=new ArrayAdapter<>( getActivity(), android.R.layout.simple_list_item_1,lstgWebTitle);
-        lstPage.setAdapter(adpList);
-        lstPage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        arrayAdapter=new ArrayAdapter<>( getActivity(), android.R.layout.simple_list_item_1,ListWebTitle);
+        listView.setAdapter(arrayAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (listener!=null){listener.onItemSelected(position);}
@@ -82,13 +82,13 @@ public class PageListFragment extends Fragment {
 
     public void UpdateList(ArrayList<String> arrWebTitle){
             for (int i=0;i<arrWebTitle.size();i++){
-                if (lstgWebTitle.size()<=i){
-                    lstgWebTitle.add(arrWebTitle.get(i));
+                if (ListWebTitle.size()<=i){
+                    ListWebTitle.add(arrWebTitle.get(i));
                 }
                 else{
-                    lstgWebTitle.set(i,arrWebTitle.get(i));
+                    ListWebTitle.set(i,arrWebTitle.get(i));
                 }
             }
-        adpList.notifyDataSetChanged();
+        arrayAdapter.notifyDataSetChanged();
     }
 }

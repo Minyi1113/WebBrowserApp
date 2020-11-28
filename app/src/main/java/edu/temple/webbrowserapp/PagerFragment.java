@@ -26,9 +26,9 @@ public class PagerFragment extends Fragment implements PageViewerFragment.OnPage
         void OnPagerChanged(int position,String sTitle,String sURL);
     }
 
-    private ViewPager2 vp2Pager;
-    private ViewPagerFragmentStateAdapter vpAdapter;
-    ArrayList<PageViewerFragment> arrgWeb;
+    private ViewPager2 viewPager;
+    private ViewPagerFragmentStateAdapter viewPagerAdapter;
+    ArrayList<PageViewerFragment> webArray;
 
     public PagerFragment() {
         // Required empty public constructor
@@ -48,26 +48,26 @@ public class PagerFragment extends Fragment implements PageViewerFragment.OnPage
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_pager, container, false);
-        vp2Pager = view.findViewById(R.id.viewpager);
+        viewPager = view.findViewById(R.id.viewpager);
 
         if (savedInstanceState==null){
-            arrgWeb = new ArrayList<>();
-            arrgWeb.add(new PageViewerFragment());
-            PageViewerFragment pvfCurrent = arrgWeb.get(arrgWeb.size()-1);
+            webArray = new ArrayList<>();
+            webArray.add(new PageViewerFragment());
+            PageViewerFragment pvfCurrent = webArray.get(webArray.size()-1);
             pvfCurrent.addOnPageChangeURListener(this);
         }
 
 
-        vpAdapter=new ViewPagerFragmentStateAdapter(this.getActivity(),arrgWeb);
-        vp2Pager.setAdapter(vpAdapter);
+        viewPagerAdapter=new ViewPagerFragmentStateAdapter(this.getActivity(),webArray);
+        viewPager.setAdapter(viewPagerAdapter);
 
-        vp2Pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 if (listener!=null){
                     listener.OnPagerChanged(position,
-                            arrgWeb.get(position).getWebTitle(),
-                            arrgWeb.get(position).getUrl());
+                            webArray.get(position).getWebTitle(),
+                            webArray.get(position).getUrl());
                 }
             }
         });
@@ -75,53 +75,53 @@ public class PagerFragment extends Fragment implements PageViewerFragment.OnPage
         return  view;
     }
 
-    public int getCurItemPosition(){return vp2Pager.getCurrentItem();}
+    public int getCurItemPosition(){return viewPager.getCurrentItem();}
 
-    public String getCurItemTitle(){return arrgWeb.get(vp2Pager.getCurrentItem()).getWebTitle();}
+    public String getCurItemTitle(){return webArray.get(viewPager.getCurrentItem()).getWebTitle();}
 
-    public String getCurItemURL(){return arrgWeb.get(vp2Pager.getCurrentItem()).getUrl();}
+    public String getCurItemURL(){return webArray.get(viewPager.getCurrentItem()).getUrl();}
 
     @Override
     public void OnPageChangeURL(String sURL) {
-        if (listener!=null){listener.OnPagerPageChangeURL(vp2Pager.getCurrentItem(),sURL);}
+        if (listener!=null){listener.OnPagerPageChangeURL(viewPager.getCurrentItem(),sURL);}
     }
 
     @Override
     public void OnPageFinish(String sTitle) {
-        if (listener!=null){listener.OnPagerPageFinish(vp2Pager.getCurrentItem(),sTitle);}
+        if (listener!=null){listener.OnPagerPageFinish(viewPager.getCurrentItem(),sTitle);}
     }
 
     public class ViewPagerFragmentStateAdapter extends FragmentStateAdapter {
-        ArrayList<PageViewerFragment> arrMyWeb;
+        ArrayList<PageViewerFragment> MyarrayWeb;
         public ViewPagerFragmentStateAdapter(@NonNull FragmentActivity fragmentActivity,ArrayList<PageViewerFragment> arrWeb) {
             super(fragmentActivity);
-            this.arrMyWeb=arrWeb;
+            this.MyarrayWeb=arrWeb;
         }
 
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return arrMyWeb.get(position);
+            return MyarrayWeb.get(position);
         }
         @Override
         public int getItemCount() {
-            return arrMyWeb.size();
+            return MyarrayWeb.size();
         }
     }
 
     public ArrayList<String> getWebTitleList(){
-        ArrayList<String> arrgWebTitle=new ArrayList<>();
+        ArrayList<String> arrayWebTitle=new ArrayList<>();
 
-        for (int i=0;i<arrgWeb.size();i++){
-            arrgWebTitle.add(arrgWeb.get(i).getWebTitle());
+        for (int i=0;i<webArray.size();i++){
+            arrayWebTitle.add(webArray.get(i).getWebTitle());
         }
-        return arrgWebTitle;
+        return arrayWebTitle;
     }
 
     //load a website from URL
     public void LoadPageFromURL(String sURL) {
         PageViewerFragment pvfCurrent;
-        pvfCurrent = arrgWeb.get(vp2Pager.getCurrentItem());
+        pvfCurrent = webArray.get(viewPager.getCurrentItem());
 
         try {
             pvfCurrent.LoadPageFromURL(sURL);
@@ -134,24 +134,24 @@ public class PagerFragment extends Fragment implements PageViewerFragment.OnPage
     //go back or next
     public void BackNext(int iBtn){
         PageViewerFragment pvfCurrent;
-        pvfCurrent = arrgWeb.get(vp2Pager.getCurrentItem());
+        pvfCurrent = webArray.get(viewPager.getCurrentItem());
         pvfCurrent.BackNext(iBtn);
     }
 
     //Add a new WebView fragment
     public void AddFragment(){
-        arrgWeb.add(new PageViewerFragment());
-        PageViewerFragment pvfCurrent = arrgWeb.get(arrgWeb.size()-1);
+        webArray.add(new PageViewerFragment());
+        PageViewerFragment pvfCurrent = webArray.get(webArray.size()-1);
         pvfCurrent.addOnPageChangeURListener(this);
 
-        vpAdapter.notifyItemInserted(arrgWeb.size()- 1);
-        vp2Pager.setCurrentItem(arrgWeb.size()-1);
+        viewPagerAdapter.notifyItemInserted(webArray.size()- 1);
+        viewPager.setCurrentItem(webArray.size()-1);
 
     }
 
     //set current fragment
     public void setCurrentFragment(int position){
-        vp2Pager.setCurrentItem(position);
+        viewPager.setCurrentItem(position);
     }
 
 }
