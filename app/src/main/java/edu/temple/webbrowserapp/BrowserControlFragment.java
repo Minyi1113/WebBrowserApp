@@ -73,3 +73,4 @@ public class BrowserControlFragment extends Fragment {
         return myFragmentView;
     }
 }
+
