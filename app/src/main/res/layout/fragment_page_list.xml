@@ -6,7 +6,7 @@
     tools:context=".PageListFragment">
 
     <ListView
-        android:id="@+id/pageList"
+        android:id="@+id/PageList"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ListView>

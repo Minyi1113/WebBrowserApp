@@ -8,19 +8,19 @@
     tools:context=".BrowserActivity">
 
     <FrameLayout
-        android:id="@+id/browser_control"
+        android:id="@+id/browser_control_FM"
         android:layout_width="match_parent"
-        android:layout_height="65dp">
+        android:layout_height="50dp">
 
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/page_control"
-        android:layout_width="match_parent"
-        android:layout_height="68dp" />
+    android:id="@+id/page_control_FM"
+    android:layout_width="match_parent"
+    android:layout_height="50dp" />
 
     <FrameLayout
-        android:id="@+id/page_viewer"
+        android:id="@+id/page_viewer_FM"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

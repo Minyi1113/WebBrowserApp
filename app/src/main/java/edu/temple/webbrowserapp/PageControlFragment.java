@@ -16,9 +16,7 @@ public class PageControlFragment extends Fragment {
     private int[] btn_id = {R.id.ButtonGo, R.id.ButtonBack, R.id.ButtonNext};
 
     //interface
-    public void addButtonClickListener(OnClickListener listener){
-        this.listener = listener;
-    }
+    public void addButtonClickListener(OnClickListener listener){this.listener = listener;}
 
     public interface OnClickListener{
         void OnClick(int btnID);
@@ -37,14 +35,13 @@ public class PageControlFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //init EditText and 3 Buttons
-        txtURL=(EditText)getActivity().findViewById(R.id.URL);
+        txtURL=(EditText)getActivity().findViewById(R.id.URL_text);
 
         for(int i = 0; i < btn.length; i++){
             btn[i] = (ImageButton) getActivity().findViewById(btn_id[i]);
@@ -61,9 +58,7 @@ public class PageControlFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View myFragmentView =inflater.inflate(R.layout.fragment_page_control, container, false);
-
-        return  myFragmentView;
+        return  inflater.inflate(R.layout.fragment_page_control, container, false);
     }
 
     public void setURL(String sURL){
@@ -72,9 +67,7 @@ public class PageControlFragment extends Fragment {
 
     public String getURL(){
         String sTmp=txtURL.getText().toString();
-        if (sTmp.equals("")) {
-            return sTmp;
-        }
+        if (sTmp.equals("")) {return sTmp;}
 
         if (!sTmp.toLowerCase().contains("https://") &&
                 !sTmp.toLowerCase().contains("http://")) {

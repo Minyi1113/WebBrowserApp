@@ -12,12 +12,12 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/URL"
+            android:id="@+id/URL_text"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="Please enter your url"
+            android:hint="Please Enter Your URL"
             android:inputType="textPersonName" />
 
         <ImageButton

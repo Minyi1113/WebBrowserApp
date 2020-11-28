@@ -11,40 +11,30 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import java.net.MalformedURLException;
 
 public class PageViewerFragment extends Fragment {
-
-    View view;
-    private WebView webView;
+    //var
+    private WebView wbMain;
     private WebSettings webSettings;
-    private int FID;
 
     //interface
-
+    private PageViewerFragment.OnPageChangeURLListener listener;
 
     public void addOnPageChangeURListener(PageViewerFragment.OnPageChangeURLListener listener){
         this.listener = listener;}
 
-    public interface OnPageChangeURLListener{
+    public interface  OnPageChangeURLListener{
         void OnPageChangeURL(String sURL);
         void OnPageFinish(String sTitle);
     }
 
-    private PageViewerFragment.OnPageChangeURLListener listener;
-
-
     public PageViewerFragment() {
-
+        // Required empty public constructor
     }
 
-    public static PageViewerFragment newInstance(int param1) {
-        PageViewerFragment fragment = new PageViewerFragment();
-        Bundle args = new Bundle();
-        args.putInt("FID", param1);
-        fragment.setArguments(args);
-        return fragment;
+    public static PageViewerFragment newInstance() {
+        return new PageViewerFragment();
     }
 
     @Override
@@ -57,83 +47,71 @@ public class PageViewerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        view =inflater.inflate(R.layout.fragment_page_viewer, container, false);
-
-        if (getArguments()!=null) {
-            FID = getArguments().getInt("FID");
-        }
-
-        webView =(WebView)view.findViewById(R.id.WebView);
-
-        webView.addJavascriptInterface(this,"android");
-        webView.setWebViewClient(webViewClient);
-
-        webSettings= webView.getSettings();
+        // Inflate the layout for this fragment
+        final View myFragmentView =inflater.inflate(R.layout.fragment_page_viewer, container, false);
+        wbMain=(WebView)myFragmentView.findViewById(R.id.WebView);
+        wbMain.addJavascriptInterface(this,"android");
+        wbMain.setWebViewClient(webViewClient);
+        webSettings=wbMain.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setSupportZoom(true);
         webSettings.setBuiltInZoomControls(true);
 
         if(savedInstanceState != null){
-            webView.restoreState(savedInstanceState);
+            wbMain.restoreState(savedInstanceState);
         }
-        return  view;
+        return  myFragmentView;
     }
 
-
-    private WebViewClient webViewClient = new WebViewClient(){
+    private WebViewClient webViewClient=new WebViewClient(){
         //finished
         @Override
         public void onPageFinished(WebView view, String url) {
-            if (listener!=null){
-                listener.OnPageFinish(view.getTitle());
-            }
+            if (listener!=null){listener.OnPageFinish(view.getTitle());}
         }
 
         //Load page
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (listener!=null){
-                listener.OnPageChangeURL(url);
-            }
+            if (listener!=null){listener.OnPageChangeURL(url);}
         }
     };
 
     public String getWebTitle(){
-        String stringTitle="";
-        if (webView !=null)
-            stringTitle= webView.getTitle();
-        return stringTitle;
+        String sRtn="";
+        if (wbMain!=null)
+            sRtn=wbMain.getTitle();
+        return sRtn;
     }
 
     public String getUrl(){
-        String stringURL="";
-        if (webView !=null)
-            stringURL= webView.getUrl();
-        return stringURL;
+        String sRtn="";
+        if (wbMain!=null)
+            sRtn=wbMain.getUrl();
+        return sRtn;
     }
 
-    public void LoadPageFromURL(String URL) throws MalformedURLException {
-        if (webView !=null)
-            webView.loadUrl(URL);
+    public void LoadPageFromURL(String sURL) throws MalformedURLException {
+        if (wbMain!=null)
+            wbMain.loadUrl(sURL);
     }
 
-    public void BackNext(int itemBotton){
-        if (itemBotton==R.id.ButtonBack) {
-            if (webView.canGoBack()) {
-                webView.goBack();
+    public void BackNext(int iBtn){
+        if (iBtn==R.id.ButtonBack) {
+            if (wbMain.canGoBack()) {
+                wbMain.goBack();
             }
         }
-        else if (itemBotton==R.id.ButtonNext){
-            if (webView.canGoForward()) {
-                webView.goForward();
+        else if (iBtn==R.id.ButtonNext){
+            if (wbMain.canGoForward()) {
+                wbMain.goForward();
             }
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        webView.saveState(outState);
+        wbMain.saveState(outState);
     }
 }

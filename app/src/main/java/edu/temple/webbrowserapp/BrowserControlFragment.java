@@ -8,18 +8,21 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 public class BrowserControlFragment extends Fragment {
-
-    ImageButton ButtonCreat;
-    View view;
-
+    private ImageButton ButtonNewPage;
+    private ImageButton ButtonBookmark;
+    private ImageButton ButtonSave;
 
     //interface
     public void addNewButtonListener(BrowserControlFragment.OnNewButtonClickListener listener){
-        this.listener = listener;}
+        this.listener = listener;
+    }
 
     public interface OnNewButtonClickListener{
         void OnNewButtonClick();
+        void OnBookmark();
+        void OnSave();
     }
+
     private BrowserControlFragment.OnNewButtonClickListener listener;
 
     public BrowserControlFragment() {
@@ -33,22 +36,40 @@ public class BrowserControlFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_browser_control, container, false);
+        // Inflate the layout for this fragment
+        final View myFragmentView =
+                inflater.inflate(R.layout.fragment_browser_control, container, false);
 
-        ButtonCreat = view.findViewById(R.id.ButtonCreate);
-
-        ButtonCreat.setOnClickListener(new View.OnClickListener(){
+        ButtonNewPage = myFragmentView.findViewById(R.id.ButtonNewPage);
+        ButtonNewPage.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 listener.OnNewButtonClick();
             }
         });
-        return view;
+
+        ButtonBookmark = myFragmentView.findViewById(R.id.ButtonBookmark);
+        ButtonBookmark.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                listener.OnBookmark();
+            }
+        });
+
+        ButtonSave = myFragmentView.findViewById(R.id.ButtonSave);
+        ButtonSave.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                listener.OnSave();
+            }
+        });
+
+
+        return myFragmentView;
     }
 }
