@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Bundle;
-
+ 
 public class BrowserActivity extends AppCompatActivity
         implements PageControlFragment.OnClickListener,
             BrowserControlFragment.OnNewButtonClickListener,
