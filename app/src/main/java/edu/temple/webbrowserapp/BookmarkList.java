@@ -5,7 +5,7 @@ public class BookmarkList {
     private int bmID;
     private String bmTitle;
     private String bmURL;
-
+ 
     public BookmarkList(){
     }
 
