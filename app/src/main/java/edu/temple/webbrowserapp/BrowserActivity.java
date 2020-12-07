@@ -19,7 +19,7 @@ public class BrowserActivity extends AppCompatActivity
             BrowserControlFragment.OnNewButtonClickListener,
             PageListFragment.OnItemSelectedListener,
             PagerFragment.OnChangeListener
-{ 
+{    
     private final int REQUEST_CODE=111;
     private FragmentManager fm;
     private PageControlFragment pageControlFragment;
